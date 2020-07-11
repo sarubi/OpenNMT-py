@@ -5,6 +5,7 @@ import configargparse
 import codecs
 import os
 import math
+import numpy as np
 
 import torch
 
@@ -730,13 +731,24 @@ class Translator(object):
 
         return gold_scores
 
+    # def _report_score(self, name, score_total, words_total):
+    #     if words_total == 0:
+    #         msg = "%s No words predicted" % (name,)
+    #     else:
+    #         msg = ("%s AVG SCORE: %.4f, %s PPL: %.4f" % (
+    #             name, score_total / words_total,
+    #             name, math.exp(-score_total / words_total)))
+    #     return msg
+
     def _report_score(self, name, score_total, words_total):
         if words_total == 0:
             msg = "%s No words predicted" % (name,)
         else:
+            avg_score = score_total / words_total
+            ppl = np.exp(-score_total.item() / words_total)
             msg = ("%s AVG SCORE: %.4f, %s PPL: %.4f" % (
-                name, score_total / words_total,
-                name, math.exp(-score_total / words_total)))
+                name, avg_score,
+                name, ppl))
         return msg
 
     def _report_bleu(self, tgt_path):
